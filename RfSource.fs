@@ -6,6 +6,8 @@ namespace Endorphin.Instrument.Agilent.E8257D
 /// Implements functions to modify & query configuration.
 /// Organised by subsystem mirroring the Agilent configuration.
 module RfSource =
+    open Sweep
+
     /// Open an RfSource given a VISA address and timeout in milliseconds.
     let openInstrument  = IO.Connect.openInstrument
     /// Close an RfSource instrument.

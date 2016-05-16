@@ -10,14 +10,21 @@ module Source =
         let sourceString = function
             | ExternalPort EXT1 -> "EXT1"
             | ExternalPort EXT2 -> "EXT2"
+            | InternalPort INT1 -> "INT1"
+            | InternalPort INT2 -> "INT2"
             | InternalGenerator Function1 -> "FUNCTION1"
+            | InternalGenerator Function2 -> "FUNCTION2"
+
 
         /// Convert the machine representation of a trigger source into an internal representation.
         let parseSource str =
             match String.toUpper str with
             | "EXT1" -> ExternalPort EXT1
             | "EXT2" -> ExternalPort EXT2
+            | "INT1" -> InternalPort INT1
+            | "INT2" -> InternalPort INT2
             | "FUNCTION1" -> InternalGenerator Function1
+            | "FUNCTION2" -> InternalGenerator Function2
             | str -> raise << UnexpectedReplyException <| sprintf "Unexpected source: %s" str
 
     module Control =
@@ -77,6 +84,42 @@ module Source =
             /// Query the frequency of the function generator.
             let internal queryFrequency prefix fg = IO.queryFrequency (functionKey frequencyKey prefix fg)
 
+        module Internal =
+            /// Create a key for the given function, with the correct subsystem and source.
+            let private functionKey key prefix fg = sourceKey key prefix (sourceString fg)
+
+            /// Key to create a function shape.
+            let private shapeKey = ":SHAPE"
+            /// Query the shape of the machine, given the correct source and subsystem.
+            let internal queryShape prefix fg rfSource str =
+                let key = functionKey shapeKey prefix fg
+                async {
+                    let! shape = IO.queryKeyString String.toUpper key rfSource
+                    match shape with
+                    | "SINE"             -> return Sine
+                    | "TRI" | "TRIANGLE" -> return Triangle
+                    | "SQU" | "SQUARE"   -> return Square
+                    | _                  -> return raise << UnexpectedReplyException
+                                                   <| sprintf "Unexpected function shape type string: %s" str }
+
+            /// Set the shape of the function generator.
+            let internal setShape prefix src rfSource (shape : FunctionShape) = 
+                let key = sprintf "%s:%s:FUNCTION:SHAPE" prefix (sourceString src)
+                IO.setValueString functionShapeString key rfSource shape
+
+            let internal setLfOutput rfSource source (lfOutput : LfOutput) = async {
+                // expected to drive a 50 ohm load (see doubled voltage on a high impedance scope)
+                do! IO.setPeakVoltage ":LFO:AMPLITUDE" rfSource lfOutput.PeakAmplitude
+                do! IO.setValueString sourceString ":LFO:SOURCE" rfSource source
+                do! IO.setOnOffState ":LFO:STATE" rfSource On }
+
+            /// Key for setting frequencies of the function generator.
+            /// Set the frequency of the function generator.
+            let internal setFrequency prefix src = IO.setFrequency (sprintf "%s:%s:FREQ" prefix (sourceString src))
+            /// Query the frequency of the function generator.
+            let internal queryFrequency prefix src = IO.queryFrequency (sprintf "%s:%s:FREQ" prefix (sourceString src))
+
+
         module External =
             /// Key needed for operations on external sources.
             let private externalKey key prefix src = sourceKey key prefix (sourceString src)
@@ -105,6 +148,12 @@ module Source =
             | ExternalSource (_, settings) ->
                 do! External.setCoupling prefix sourceProvider rfSource settings.Coupling
                 do! External.setImpedance prefix sourceProvider rfSource settings.Impedance
-            | InternalSource (_, settings) ->
+            | InternalFunctionGenerator (_, settings) ->
                 do! Function.setShape prefix sourceProvider rfSource settings.Shape
-                do! Function.setFrequency prefix sourceProvider rfSource settings.Frequency }
+                do! Function.setFrequency prefix sourceProvider rfSource settings.Frequency
+            | InternalSource (_,settings) ->
+                do! Internal.setShape prefix sourceProvider rfSource settings.Shape
+                do! Internal.setFrequency prefix sourceProvider rfSource settings.Frequency
+                match settings.LfOutput with
+                | Some lfOutput -> do! Internal.setLfOutput rfSource sourceProvider lfOutput
+                | None -> () }

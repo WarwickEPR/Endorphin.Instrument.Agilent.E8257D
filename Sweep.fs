@@ -6,6 +6,8 @@ open Endorphin.Core
 
 module Sweep =
     module internal Translate =
+        open Sweep
+
         /// Convert the machine representation of a sweep mode into the internal representation.
         let parseSweepMode str =
             match String.toUpper str with
@@ -39,6 +41,7 @@ module Sweep =
 
     module Control =
         open Translate
+        open Sweep
 
         [<AutoOpen>]
         module Frequency =
@@ -166,7 +169,8 @@ module Sweep =
                 | None   -> if options.ListTrigger = Some Immediate
                             then return raise <| UnexpectedReplyException "Dwell time required for free-running, immediate trigger sweep through a list of points"
             do! setRetrace rfSource options.Retrace 
-            do! setMode rfSource options.Mode }
+            do! setContinousMode rfSource options.Continuous
+            do! setMode rfSource options.Mode}
 
         module Step =
 
@@ -256,6 +260,9 @@ module Sweep =
         /// Starts an armed sweep waiting on Bus triggering.
         let busTrigger = IO.writeKey "*TRG"
 
+        /// Inititates a sweep in single sweep mode
+        let initiate = IO.writeKey ":INIT"
+
         /// Key needed to begin sweeping immediately.
         /// Command reference p.215.
         let private immediateKey = ":TRIGGER"
@@ -286,6 +293,7 @@ module Sweep =
     /// Build a configuration using the data model.
     module Configure =
         open Microsoft.FSharp.Data.UnitSystems.SI.UnitSymbols
+        open Sweep
 
         /// Create an absolute value of fixed amplitude.
         let fixedPowerInDbm power = FixedAmplitude <| Power_dBm power
@@ -304,6 +312,7 @@ module Sweep =
             StepTrigger = Some Immediate
             ListTrigger = Some Immediate
             DwellTime = Some ( Duration_sec 2e-3<s> )
+            Continuous = On
             Retrace = On
             Mode = Auto }
 
@@ -372,6 +381,7 @@ module Sweep =
     // Apply a configuration.
     module Apply =
         open Control
+        open Sweep
         /// Set up an RF step sweep from a model.
         let stepSweep rfSource (stepSweep : StepSweep) = async {
             do! Step.setFrequencySweep rfSource stepSweep.Frequency

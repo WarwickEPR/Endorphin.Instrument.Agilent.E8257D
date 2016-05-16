@@ -13,6 +13,7 @@
     <TargetFSharpCoreVersion>4.4.0.0</TargetFSharpCoreVersion>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Name>Endorphin.Instrument.Agilent.E8257D</Name>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -62,6 +63,7 @@
     <Compile Include="Routing.fs" />
     <Compile Include="RfSource.fs" />
     <None Include="AgilentSweep.fsx" />
+    <None Include="AgilentModulatedSweep.fsx" />
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

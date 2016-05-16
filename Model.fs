@@ -35,6 +35,7 @@ module Model =
         type Amplitude = Power_dBm of float<dBm>
         /// A frequency for a signal, given as a float type with units of Hz.
         type Frequency = Frequency_Hz of float<Hz>
+        type Voltage = Voltage_V of float<V>
 
         /// A phase for an I/Q signal, either in radians or degrees.
         type Phase =
@@ -117,8 +118,10 @@ module Model =
         // Unique Sources
         /// Which channel to listen for external input on.
         type ExternalInput = EXT1 | EXT2
+        /// Internal modulation source
+        type InternalModulationSource = INT1 | INT2
         /// Which channel to use for the function generator.
-        type FunctionGenerator = Function1
+        type FunctionGenerator = Function1 | Function2
 
         /// Which amplitude modulation path to use.
         type AmPath = AM1 | AM2
@@ -129,6 +132,8 @@ module Model =
         type Depth =
             | Linear of depth : Percentage
             | Exponential of depth : DecibelRatio
+
+        type LfOutput = { PeakAmplitude : Voltage }
 
         /// Create a depth measured linearly as a percentage.
         let depthInPercentage (depth : Percentage) = Linear depth
@@ -150,11 +155,17 @@ module Model =
             Shape : FunctionShape
             Frequency : Frequency
             PhaseOffset : Phase }
+        
+        type InternalSourceSettings = {
+            Shape : FunctionShape
+            Frequency: Frequency
+            LfOutput : LfOutput option }
 
         /// A source of a signal, either external or internal.
         type Source = 
             | ExternalSource of port : ExternalInput * settings : ExternalSettings
-            | InternalSource of generator : FunctionGenerator * settings : FunctionSettings
+            | InternalSource of source : InternalModulationSource * settings : InternalSourceSettings
+            | InternalFunctionGenerator of generator : FunctionGenerator * settings : FunctionSettings
 
         /// Modulations have a set path, settings and source which will have its own settings
         type Modulation =
@@ -177,19 +188,20 @@ module Model =
         /// The location of a source.
         type SourceProvider =
             | ExternalPort of port : ExternalInput
+            | InternalPort of port : InternalModulationSource
             | InternalGenerator of generator : FunctionGenerator
 
         /// Get the source of a modulation.
         let modulationSource = function
             | AmplitudeModulation (_, _, source)
             | FrequencyModulation (_, _, source) -> source
-
+        
         /// Find the location which is providing a source.
         let sourceProvider = function
             | ExternalSource (port,_) -> ExternalPort port
-            | InternalSource (generator,_) -> InternalGenerator generator
+            | InternalSource (port,_) -> InternalPort port
+            | InternalFunctionGenerator (generator,_) -> InternalGenerator generator
 
-    [<AutoOpen>]
     module Sweep =
         /// The mode to operate the sweep in, either fixed or swept.
         type SweepMode = Fixed | Swept
@@ -221,6 +233,7 @@ module Model =
             ListTrigger : TriggerSource option
             DwellTime : Duration option
             Retrace : OnOffState
+            Continuous : OnOffState
             Mode : AutoManualState }
 
         /// A completely represented step sweep, including the frequency to sweep, the amplitude to
@@ -347,8 +360,8 @@ module Model =
             Input            : InputRouting
             Internal         : InternalRouting
             MarkerPolarities : MarkerPolarities }
-
+    
     /// A complete record of settings for the Agilent box, based on the sweep/modulation model.
     type RfSettings = {
-        Sweep : Sweep
+        Sweep : Sweep.Sweep
         Modulation : Modulation list }

@@ -45,7 +45,8 @@ module Modulation =
         /// Get the extra infix part of the key needed for the modulation source.
         let modulationSourceInfix = function
             | ExternalSource _ -> ""
-            | InternalSource _ -> ":INTERNAL"
+            | InternalSource _ -> ""
+            | InternalFunctionGenerator _ -> ":INTERNAL"
 
     module Control =
         open Translate
@@ -139,10 +140,18 @@ module Modulation =
             Shape = Sine
             Frequency = Frequency_Hz 1.0e3<Hz>
             PhaseOffset = Phase_rad 0.0<rad> }
+        let defaultInternalSettings = { Shape = Sine; Frequency = Frequency_Hz 1.0e3<Hz>; LfOutput = None }
         /// Change the shape of the given settings to match the new value.
         let withShape shape (settings : FunctionSettings) = { settings with Shape = shape }
+        /// Change the shape of the given settings to match the new value.
+        let withInternalShape shape (settings : InternalSourceSettings) = { settings with Shape = shape }
+        /// Send the modulation waveform to the LfOutput port
+        let withLfOutput peakAmplitude (settings : InternalSourceSettings) = { settings with LfOutput = Some { PeakAmplitude = Voltage_V peakAmplitude }}
         /// Change the frequency (in Hz) of the given settings to match the new value.
         let withFrequencyInHz frequency (settings : FunctionSettings) =
+            { settings with Frequency = Frequency_Hz frequency }
+        /// Change the frequency (in Hz) of the given settings to match the new value.
+        let withInternalFrequencyInHz frequency (settings : InternalSourceSettings) =
             { settings with Frequency = Frequency_Hz frequency }
         /// Change the phase offset (in radians) of the given settings to match the
         /// new value.
@@ -151,16 +160,21 @@ module Modulation =
 
         /// Create a new sine-shaped function generator source with the given frequency in Hz.
         let internalSineSourceInHz frequency =
-            InternalSource (Function1, defaultFunctionSettings |> withFrequencyInHz frequency)
+            InternalSource (INT1, defaultInternalSettings |> withInternalFrequencyInHz frequency)
+
+        /// Create a new sine-shaped function generator source with the given frequency in Hz.
+        let internalSineSourceInHzWithLfOutput frequency voltage =
+            InternalSource (INT1, defaultInternalSettings
+                                  |> withInternalFrequencyInHz frequency
+                                  |> withLfOutput voltage)
 
         /// Create a new function generator source with the given frequence (in Hz), shape, and
         /// phase (in radians).
         let internalGeneralSourceInHz frequency shape phase =
-            let settings = defaultFunctionSettings
-                           |> withShape shape
-                           |> withFrequencyInHz frequency
-                           |> withPhaseOffsetInRad phase
-            InternalSource (Function1, settings)
+            let settings = defaultInternalSettings
+                           |> withInternalShape shape
+                           |> withInternalFrequencyInHz frequency
+            InternalSource (INT1, settings)
     
     module Apply =
         open Control
@@ -189,7 +203,6 @@ module Modulation =
 
         /// Apply a given modulation to the machine.
         let private applyModulation rfSource modulation = async {
-            printfn "applyModulation: %A" modulation
             match modulation with
             | AmplitudeModulation (path,settings,source) ->
                 let prefix = sprintf ":%s" <| amPathString path
@@ -197,17 +210,18 @@ module Modulation =
                 do! Amplitude.setDepth path rfSource settings.Depth
                 do! Source.Apply.setup sourcePrefix source rfSource
                 do! Amplitude.setSource path rfSource (sourceProvider source)
+                do! Amplitude.setState path rfSource On
             | FrequencyModulation (path,settings,source) ->
                 let prefix = sprintf ":%s" <| fmPathString path
                 let sourcePrefix = prefix + modulationSourceInfix source
                 do! Frequency.setDeviation path rfSource settings.Deviation
                 do! Source.Apply.setup sourcePrefix source rfSource
-                do! Frequency.setSource path rfSource (sourceProvider source) }
+                do! Frequency.setSource path rfSource (sourceProvider source)
+                do! Frequency.setState path rfSource On}
 
         /// Apply a list of modulation settings to the machine in order, after first
         /// verifying them.
         let modulationSettings rfSource settings = async {
             Choice.bindOrRaise <| verifyModulationSettings settings
             for modulation in settings do
-                printfn "About to apply modulation %A" modulation
                 do! applyModulation rfSource modulation }

@@ -13,6 +13,10 @@ module internal Parsing =
     /// Convert an amplitude in dBm into a string representation.
     let amplitudeString (Power_dBm amplitude) = sprintf "%e dBm" (float amplitude)
 
+    /// Convert a string containing a peak voltage into a voltage
+    let parsePeakVoltage (str : string) = Voltage_V (float str * 1.0<V>)
+    let peakVoltageString (Voltage_V volts) = sprintf "%e VP" (float volts)
+
     /// Convert a string containing a number into a frequence in Hz.
     let parseFrequencyInHz (str : string) = Frequency_Hz (float str * 1.0<Hz>)
     /// Convert a frequency in Hz into a string representation.
