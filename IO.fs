@@ -188,6 +188,8 @@ module internal IO =
             let! _ = Error.queryErrorQueue rfSource // clear the error queue before doing anything
             return rfSource }
 
+        let setLocal = writeKey ":SYSTEM:COMM:GTLocal"
+
         /// Close a given RfSource.
         let closeInstrument (RfSource rfSource) = Visa.closeInstrument rfSource
 

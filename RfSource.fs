@@ -11,7 +11,9 @@ module RfSource =
     /// Open an RfSource given a VISA address and timeout in milliseconds.
     let openInstrument  = IO.Connect.openInstrument
     /// Close an RfSource instrument.
-    let closeInstrument = IO.Connect.closeInstrument
+    let closeInstrument rfSource = async {
+        do! IO.Connect.setLocal rfSource 
+        do! IO.Connect.closeInstrument rfSource }
     /// Query the identity of an RfSource, and match the returned string against ones known
     /// to the program.
     let queryIdentity = IO.Identify.queryIdentity
