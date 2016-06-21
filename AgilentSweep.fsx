@@ -1,4 +1,5 @@
 ﻿#r "../Endorphin.Core/bin/Debug/Endorphin.Core.dll"
+#r "../Endorphin.Utilities/bin/Debug/Endorphin.Utilities.dll"
 #r "../packages/log4net.2.0.5/lib/net45-full/log4net.dll"
 #r "bin/Debug/Endorphin.Instrument.Agilent.E8257D.dll"
 
