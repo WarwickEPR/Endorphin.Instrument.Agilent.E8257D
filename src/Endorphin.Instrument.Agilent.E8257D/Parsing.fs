@@ -56,7 +56,7 @@ module internal Parsing =
         | Impedance_50Ohm  -> "50"
         | Impedance_600Ohm -> "600"
         | Impedance_1MOhm  -> "1000000"
-    
+
     /// Convert a machine representation of a direction into an internal representation.
     let parseDirection str =
         match String.toUpper str with

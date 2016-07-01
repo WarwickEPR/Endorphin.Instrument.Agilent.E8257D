@@ -61,7 +61,7 @@ module internal IO =
 
         /// Loop through the error queue of the machine, creating a sequence of all the listed
         /// errors until the queue is empty.
-        let queryErrorQueue rfSource = 
+        let queryErrorQueue rfSource =
             let rec errorQueueLoop errorList = async {
                 let! nextError = queryNextErrorInQueue rfSource
                 if nextError.Code <> 0 then return! errorQueueLoop (nextError :: errorList)
@@ -143,7 +143,7 @@ module internal IO =
 
     /// Write a key without a value to the machine.  Useful for "delete all" style functions.
     let writeKey key rfSource = setValueString (fun _ -> "") key rfSource None
- 
+
     /// Functions related to identifying the connected machine.
     module Identify =
         /// Attempt to parse a device ID string into an internal representation of a
@@ -240,7 +240,7 @@ module internal IO =
         return parseAmplitudeInDbm response }
 
     /// Set a sequence of amplitude values.
-    let setAmplitudeSeq key = setValueString (String.csvSeqString amplitudeString) key 
+    let setAmplitudeSeq key = setValueString (String.csvSeqString amplitudeString) key
     /// Query a sequence of amplitudes, returning the values in dBm.
     let queryAmplitudeSeq key (RfSource rfSource) = async {
         let! powerUnit = ":UNIT:POW?" |> Visa.String.query rfSource
@@ -253,7 +253,7 @@ module internal IO =
     let queryPeakVoltage = queryKeyString parsePeakVoltage
 
     /// Set the duration of the given key to have the given value in seconds.
-    let setDuration = setValueString durationString 
+    let setDuration = setValueString durationString
     /// Query the given key for a duration in seconds.
     let queryDuration = queryKeyString parseDurationInSec
 
@@ -291,7 +291,7 @@ module internal IO =
     let setDecibelRatio = setValueString decibelRatioString
     /// Query the given key for a decibel ratio.
     let queryDecibelRatio = queryKeyString parseDecibelRatio
-    
+
     /// Set the given key to have the given polarity.
     let setPolarity = setValueString polarityString
     /// Query the given key for a polarity.

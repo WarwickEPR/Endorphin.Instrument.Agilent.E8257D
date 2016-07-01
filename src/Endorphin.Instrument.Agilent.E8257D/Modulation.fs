@@ -51,13 +51,13 @@ module Modulation =
     module Control =
         open Translate
         open Source.Translate
-        
+
         /// Key needed to set the state of the modulation.
         let private stateKey = ":STATE"
         /// Key needed to set the source of the modulation.
         let private sourceKey = ":SOURCE"
         /// Set the soruce of the modulation.
-        let private setSource = IO.setValueString sourceString 
+        let private setSource = IO.setValueString sourceString
         /// Query the source of the modulation and parse the result.
         let private querySource = IO.queryKeyString parseSource
 
@@ -69,7 +69,7 @@ module Modulation =
             let setState path = IO.setOnOffState (prefix path stateKey)
             /// Query the state of the amplitude modulation of the given path.
             let queryState path = IO.queryOnOffState (prefix path stateKey)
-        
+
             /// Set the source of the amplitude modulation of the given path.
             let setSource path = setSource (prefix path sourceKey)
             /// Query the source of the amplitude modulation of the given path.
@@ -175,7 +175,7 @@ module Modulation =
                            |> withInternalShape shape
                            |> withInternalFrequencyInHz frequency
             InternalSource (INT1, settings)
-    
+
     module Apply =
         open Control
         open Translate

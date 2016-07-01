@@ -68,9 +68,9 @@ module Source =
                                                    <| sprintf "Unexpected function shape type string: %s" str }
 
             /// Set the shape of the function generator.
-            let internal setShape prefix fg rfSource (shape : FunctionShape) = 
+            let internal setShape prefix fg rfSource (shape : FunctionShape) =
                 let key = functionKey shapeKey prefix fg
-                let rkey = functionKey rampKey prefix fg 
+                let rkey = functionKey rampKey prefix fg
                 async {
                     do! IO.setValueString functionShapeString key rfSource shape
                     match shape with
@@ -103,7 +103,7 @@ module Source =
                                                    <| sprintf "Unexpected function shape type string: %s" str }
 
             /// Set the shape of the function generator.
-            let internal setShape prefix src rfSource (shape : FunctionShape) = 
+            let internal setShape prefix src rfSource (shape : FunctionShape) =
                 let key = sprintf "%s:%s:FUNCTION:SHAPE" prefix (sourceString src)
                 IO.setValueString functionShapeString key rfSource shape
 

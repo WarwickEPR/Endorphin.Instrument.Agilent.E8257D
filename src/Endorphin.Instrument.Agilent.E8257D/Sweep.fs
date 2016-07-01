@@ -168,7 +168,7 @@ module Sweep =
                 | Some t -> do! setDwellTime rfSource t
                 | None   -> if options.ListTrigger = Some Immediate
                             then return raise <| UnexpectedReplyException "Dwell time required for free-running, immediate trigger sweep through a list of points"
-            do! setRetrace rfSource options.Retrace 
+            do! setRetrace rfSource options.Retrace
             do! setContinousMode rfSource options.Continuous
             do! setMode rfSource options.Mode}
 
@@ -256,7 +256,7 @@ module Sweep =
             let queryFrequenciesCount = IO.queryInt frequenciesCountKey
 
     /// Commands used to control running sweeps.
-    module Runtime = 
+    module Runtime =
         /// Starts an armed sweep waiting on Bus triggering.
         let busTrigger = IO.writeKey "*TRG"
 

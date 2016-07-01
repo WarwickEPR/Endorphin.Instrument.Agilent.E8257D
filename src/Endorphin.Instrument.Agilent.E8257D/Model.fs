@@ -28,7 +28,7 @@ module Model =
 
         /// A returned error, including its code and the associated message.
         type Error = { Code : int ; Message : string }
-   
+
     [<AutoOpen>]
     module Quantities =
         /// An absolute amplitude of a signal, given as a float type with units of dBm.
@@ -50,7 +50,7 @@ module Model =
         type Percentage = Percentage of float<pct>
         /// A relative amplitude, measured in dB rather than dBm.
         type DecibelRatio = DecibelRatio of float<dB>
-        
+
         /// Impedances that the machine can operate at.
         type Impedance =
             | Impedance_50Ohm
@@ -58,7 +58,7 @@ module Model =
             | Impedance_1MOhm
 
     [<AutoOpen>]
-    module General = 
+    module General =
         /// A direction of something, often a range in a sweep.
         type Direction = Up | Down
         /// A state of coupling, either to AC or to DC.
@@ -155,14 +155,14 @@ module Model =
             Shape : FunctionShape
             Frequency : Frequency
             PhaseOffset : Phase }
-        
+
         type InternalSourceSettings = {
             Shape : FunctionShape
             Frequency: Frequency
             LfOutput : LfOutput option }
 
         /// A source of a signal, either external or internal.
-        type Source = 
+        type Source =
             | ExternalSource of port : ExternalInput * settings : ExternalSettings
             | InternalSource of source : InternalModulationSource * settings : InternalSourceSettings
             | InternalFunctionGenerator of generator : FunctionGenerator * settings : FunctionSettings
@@ -174,12 +174,12 @@ module Model =
 
         /// A list of modulations to apply as settings.
         type ModulationSettings = Modulation list
- 
+
         /// Extract just the modulation channel from a Modulation
         type ModulationChannel =
             | AmChannel of path : AmPath
             | FmChannel of path : FmPath
- 
+
         /// Get the channel which is being modulated.
         let modulationChannel = function
             | AmplitudeModulation (path, _, _) -> AmChannel path
@@ -195,7 +195,7 @@ module Model =
         let modulationSource = function
             | AmplitudeModulation (_, _, source)
             | FrequencyModulation (_, _, source) -> source
-        
+
         /// Find the location which is providing a source.
         let sourceProvider = function
             | ExternalSource (port,_) -> ExternalPort port
@@ -360,7 +360,7 @@ module Model =
             Input            : InputRouting
             Internal         : InternalRouting
             MarkerPolarities : MarkerPolarities }
-    
+
     /// A complete record of settings for the Agilent box, based on the sweep/modulation model.
     type RfSettings = {
         Sweep : Sweep.Sweep
