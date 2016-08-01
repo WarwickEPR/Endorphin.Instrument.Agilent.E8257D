@@ -1,8 +1,10 @@
 // Copyright (c) University of Warwick. All Rights Reserved. Licensed under the Apache License, Version 2.0. See LICENSE.txt in the project root for license information.
 
-#r "../Endorphin.Core/bin/Debug/Endorphin.Core.dll"
-#r "../Endorphin.Utilities/bin/Debug/Endorphin.Utilities.dll"
-#r "../packages/log4net.2.0.5/lib/net45-full/log4net.dll"
+#I "../../packages/"
+
+#r "Endorphin.Core/lib/net452/Endorphin.Core.dll"
+#r "Endorphin.Core.NationalInstruments/lib/net452/Endorphin.Core.NationalInstruments.dll"
+#r "log4net/lib/net45-full/log4net.dll"
 #r "bin/Debug/Endorphin.Instrument.Agilent.E8257D.dll"
 
 open Microsoft.FSharp.Data.UnitSystems.SI.UnitSymbols
