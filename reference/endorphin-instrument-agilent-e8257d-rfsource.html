@@ -57,80 +57,19 @@ Organised by subsystem mirroring the Agilent configuration.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '41', 41)" onmouseover="showTip(event, '41', 41)">
-            applySettings rfSource settings
+          <code onmouseout="hideTip(event, '52', 52)" onmouseover="showTip(event, '52', 52)">
+            applySettings settings instrument
           </code>
-          <div class="tip" id="41">
-            <strong>Signature:</strong> rfSource:RfSource -&gt; settings:RfSettings -&gt; Async&lt;unit&gt;<br />
+          <div class="tip" id="52">
+            <strong>Signature:</strong> settings:RfSettings -&gt; instrument:IScpiInstrument -&gt; Async&lt;unit&gt;<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/WarwickEPR/Endorphin.Instrument.Agilent.E8257D/tree/master/src/Endorphin.Instrument.Agilent.E8257D/RfSource.fs#L22-22" class="github-link">
+            <a href="http://github.com/WarwickEPR/Endorphin.Instrument.Agilent.E8257D/tree/master/src/Endorphin.Instrument.Agilent.E8257D/RfSource.fs#L11-11" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           <p>Apply a set of settings to the given RfSource machine.</p>
-
-
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '42', 42)" onmouseover="showTip(event, '42', 42)">
-            closeInstrument rfSource
-          </code>
-          <div class="tip" id="42">
-            <strong>Signature:</strong> rfSource:RfSource -&gt; Async&lt;unit&gt;<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/WarwickEPR/Endorphin.Instrument.Agilent.E8257D/tree/master/src/Endorphin.Instrument.Agilent.E8257D/RfSource.fs#L14-14" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Close an RfSource instrument.</p>
-
-
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '43', 43)" onmouseover="showTip(event, '43', 43)">
-            openInstrument 
-          </code>
-          <div class="tip" id="43">
-            <strong>Signature:</strong> string -&gt; int&lt;MeasureProduct&lt;ms,MeasureOne&gt;&gt; -&gt; Async&lt;RfSource&gt;<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/WarwickEPR/Endorphin.Instrument.Agilent.E8257D/tree/master/src/Endorphin.Instrument.Agilent.E8257D/RfSource.fs#L12-12" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Open an RfSource given a VISA address and timeout in milliseconds.</p>
-
-
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '44', 44)" onmouseover="showTip(event, '44', 44)">
-            queryIdentity 
-          </code>
-          <div class="tip" id="44">
-            <strong>Signature:</strong> RfSource -&gt; Async&lt;DeviceId&gt;<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/WarwickEPR/Endorphin.Instrument.Agilent.E8257D/tree/master/src/Endorphin.Instrument.Agilent.E8257D/RfSource.fs#L19-19" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Query the identity of an RfSource, and match the returned string against ones known
-to the program.</p>
 
 
         </td>

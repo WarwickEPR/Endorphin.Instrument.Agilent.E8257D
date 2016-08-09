@@ -45,7 +45,22 @@
 <!-- Render nested types and modules, if there are any -->
   <h2>Nested types and modules</h2>
   <div>
-      <table class="table table-bordered module-list">
+      <table class="table table-bordered type-list">
+    <thead>
+      <tr><td>Type</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td class="type-name">
+            <a href="endorphin-instrument-agilent-e8257d-modulation-depthtype.html">DepthType</a>
+          </td>
+          <td class="xmldoc"><p>The type of modulation depth - linear or exponential.</p>
+
+</td>
+        </tr>
+    </tbody>
+  </table>
+  <table class="table table-bordered module-list">
     <thead>
       <tr><td>Module</td><td>Description</td></tr>
     </thead>
@@ -79,6 +94,55 @@
 
   </div>
 
+  <h3>Functions and values</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Function or value</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '25', 25)" onmouseover="showTip(event, '25', 25)">
+            modulationSourceInfix _arg1
+          </code>
+          <div class="tip" id="25">
+            <strong>Signature:</strong> _arg1:Source -&gt; string<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/WarwickEPR/Endorphin.Instrument.Agilent.E8257D/tree/master/src/Endorphin.Instrument.Agilent.E8257D/Modulation.fs#L20-20" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Get the extra infix part of the key needed for the modulation source.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '26', 26)" onmouseover="showTip(event, '26', 26)">
+            parseDepthType str
+          </code>
+          <div class="tip" id="26">
+            <strong>Signature:</strong> str:string -&gt; DepthType<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/WarwickEPR/Endorphin.Instrument.Agilent.E8257D/tree/master/src/Endorphin.Instrument.Agilent.E8257D/Modulation.fs#L13-13" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Convert the machine representation of the depth type into the internal
+representation.</p>
+
+
+        </td>
+      </tr>
+    </tbody>
+  </table>
 
         </div>
         <div class="span3">
