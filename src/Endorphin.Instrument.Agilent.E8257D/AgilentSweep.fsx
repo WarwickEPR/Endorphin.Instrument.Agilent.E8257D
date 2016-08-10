@@ -3,8 +3,9 @@
 #I "../../packages/"
 
 #r "Endorphin.Core/lib/net452/Endorphin.Core.dll"
+#r "Endorphin.Core.NationalInstruments/lib/net452/Endorphin.Core.NationalInstruments.dll"
 #r "log4net/lib/net45-full/log4net.dll"
-#r "bin/Release/Endorphin.Instrument.Agilent.E8257D.dll"
+#r "bin/Debug/Endorphin.Instrument.Agilent.E8257D.dll"
 
 
 open Microsoft.FSharp.Data.UnitSystems.SI.UnitSymbols
@@ -22,13 +23,13 @@ let sweepSettings =
 try
     async {
         // open the keysight box - set the VISA access string you need here and timeout
-        let! rfSource = RfSource.openInstrument "TCPIP::192.168.0.3::INSTR" 2000<ms>
+        let! instrument = IO.connect "TCPIP::192.168.0.3::INSTR" 2000<ms>
         printfn "Opened instrument"
 
-        do! Sweep.Apply.stepSweep rfSource sweepSettings
+        do! Sweep.Apply.stepSweep sweepSettings instrument
 
         // tidy up and close
-        do! RfSource.closeInstrument rfSource}
+        do! IO.disconnect instrument}
     |> Async.RunSynchronously
 with
     | :? InstrumentErrorException as exn -> printfn "Failed with instrument errors: %A" exn.Data0

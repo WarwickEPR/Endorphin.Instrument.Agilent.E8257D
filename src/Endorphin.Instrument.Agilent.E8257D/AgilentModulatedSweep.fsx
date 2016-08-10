@@ -35,18 +35,18 @@ let settings = { Sweep = sweep; Modulation = [ modulation ] }
 try
     async {
         // open the keysight box - set the VISA access string you need here and timeout
-        let! rfSource = RfSource.openInstrument "TCPIP::192.168.0.3::INSTR" 2000<ms>
+        let! instrument = IO.connect "TCPIP::192.168.0.3::INSTR" 2000<ms>
         printfn "Opened instrument"
 
-        do! RfSource.applySettings rfSource settings
+        do! RfSource.applySettings settings instrument
         printfn "Applied settings"
         for i in 1..20 do
             printfn "Triggering"
-            do! Sweep.Runtime.busTrigger rfSource
+            do! Sweep.Runtime.busTrigger instrument
             do! Async.Sleep 8000
 
         // tidy up and close
-        do! RfSource.closeInstrument rfSource}
+        do! IO.disconnect instrument }
     |> Async.RunSynchronously
 with
     | :? InstrumentErrorException as exn -> printfn "Failed with instrument errors: %A" exn.Data0

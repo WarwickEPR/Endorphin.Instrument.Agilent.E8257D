@@ -64,7 +64,7 @@
       <Link>paket-files/Endorphin.Core.String.fs</Link>
     </Compile>
     <Compile Include="Model.fs" />
-    <Compile Include="Parsing.fs" />
+    <Compile Include="Parse.fs" />
     <Compile Include="IO.fs" />
     <Compile Include="Basic.fs" />
     <Compile Include="Triggering.fs" />

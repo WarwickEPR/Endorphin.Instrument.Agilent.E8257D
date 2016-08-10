@@ -12,72 +12,109 @@ exception UnexpectedReplyException of string
 [<AutoOpen>]
 module Model =
     [<AutoOpen>]
-    module Instrument =
-        /// An opened and connected RF source, which can have commands written to it.
-        type RfSource = internal RfSource of Visa.Instrument
-
-        /// A record of the identification information a device provides.
-        type DeviceId = {
-            Manufacturer : string
-            ModelNumber : string
-            SerialNumber : string
-            Version : string }
-
-        /// Model numbers that are recognised by the program.
-        type ModelNumber = E8257D
-
-        /// A returned error, including its code and the associated message.
-        type Error = { Code : int ; Message : string }
-
-    [<AutoOpen>]
     module Quantities =
         /// An absolute amplitude of a signal, given as a float type with units of dBm.
-        type Amplitude = Power_dBm of float<dBm>
+        type Amplitude = Power_dBm of float<dBm> with
+            interface SCPI.IScpiFormatable with
+                member this.ToScpiString () = sprintf "%e dBm" (match this with Power_dBm that -> float that)
+
         /// A frequency for a signal, given as a float type with units of Hz.
-        type Frequency = Frequency_Hz of float<Hz>
-        type Voltage = Voltage_V of float<V>
+        type Frequency = Frequency_Hz of float<Hz> with
+            interface SCPI.IScpiFormatable with
+                member this.ToScpiString () = sprintf "%e Hz" (match this with Frequency_Hz that -> float that)
+        type Voltage = Voltage_V of float<V> with
+            interface SCPI.IScpiFormatable with
+                member this.ToScpiString () = sprintf "%e VP" (match this with Voltage_V that -> float that)
 
         /// A phase for an I/Q signal, either in radians or degrees.
         type Phase =
             | Phase_rad of float<rad>
             | Phase_deg of float<deg>
-        /// A list of phases to cycle through.
-        type PhaseCycle = internal PhaseCycle of Phase array
+            interface SCPI.IScpiFormatable with
+                member this.ToScpiString () = this |> function
+                    | Phase_rad that -> sprintf "%e RAD" (float that)
+                    | Phase_deg that -> sprintf "%e DEG" (float that)
 
         /// A duration that something lasts for.
-        type Duration = Duration_sec of float<s>
+        type Duration = Duration_sec of float<s> with
+            interface SCPI.IScpiFormatable with
+                member this.ToScpiString () = sprintf "%e s" (match this with Duration_sec that -> float that)
         /// A percentage of a total.
-        type Percentage = Percentage of float<pct>
+        type Percentage = Percentage of float<pct> with
+            interface SCPI.IScpiFormatable with
+                member this.ToScpiString () = sprintf "%e PCT" (match this with Percentage that -> float that)
         /// A relative amplitude, measured in dB rather than dBm.
-        type DecibelRatio = DecibelRatio of float<dB>
+        type DecibelRatio = DecibelRatio of float<dB> with
+            interface SCPI.IScpiFormatable with
+                member this.ToScpiString () = sprintf "%e dB" (match this with DecibelRatio that -> float that)
 
         /// Impedances that the machine can operate at.
         type Impedance =
             | Impedance_50Ohm
             | Impedance_600Ohm
             | Impedance_1MOhm
+            interface SCPI.IScpiFormatable with
+                member this.ToScpiString () = this |> function
+                    | Impedance_50Ohm  -> "50"
+                    | Impedance_600Ohm -> "600"
+                    | Impedance_1MOhm  -> "1000000"
 
     [<AutoOpen>]
     module General =
         /// A direction of something, often a range in a sweep.
-        type Direction = Up | Down
+        type Direction = Up | Down with
+            interface SCPI.IScpiFormatable with
+                member this.ToScpiString () = this |> function
+                    | Up -> "UP"
+                    | Down -> "DOWN"
+
         /// A state of coupling, either to AC or to DC.
-        type Coupling = AC | DC
+        type Coupling = AC | DC with
+            interface SCPI.IScpiFormatable with
+                member this.ToScpiString () = this |> function
+                    | AC -> "AC"
+                    | DC -> "DC"
+
         /// A toggle state, where something can either be On or Off.
-        type OnOffState = On | Off
-        /// An automatic or manual state, for different types of control.
-        type AutoManualState = Auto | Manual
+        type OnOffState = On | Off with
+            interface SCPI.IScpiFormatable with
+                member this.ToScpiString () = this |> function
+                    | On -> "ON"
+                    | Off -> "OFF"
+
+        /// An automatic or manual state, for different types of control. with
+        type AutoManualState = Auto | Manual with
+            interface SCPI.IScpiFormatable with
+                member this.ToScpiString () = this |> function
+                    | Auto -> "AUTO"
+                    | Manual -> "MANUAL"
+
         /// Polarity of something, either Positive or Negative.
-        type Polarity = Positive | Negative
+        type Polarity = Positive | Negative with
+            interface SCPI.IScpiFormatable with
+                member this.ToScpiString () = this |> function
+                    | Positive -> "POS"
+                    | Negative -> "NEG"
+
         /// The shape of a function, for use in the function generator.
         type FunctionShape =
             | Sine
             | Triangle
             | Square
             | Ramp of polarity : Polarity
-        /// A state which can either be low or high.
-        type LowHighState = Low | High
+            interface SCPI.IScpiFormatable with
+                member this.ToScpiString () = this |> function
+                    | Sine     -> "SINE"
+                    | Triangle -> "TRI"
+                    | Square   -> "SQU"
+                    | Ramp _   -> "RAMP"
 
+        /// A state which can either be low or high.
+        type LowHighState = Low | High with
+            interface SCPI.IScpiFormatable with
+                member this.ToScpiString () = this |> function
+                    | Low -> "LOW"
+                    | High -> "HIGH"
 
     [<AutoOpen>]
     module Triggering =
@@ -86,11 +123,20 @@ module Model =
             | Trigger1
             | Trigger2
             | Pulse
+            interface SCPI.IScpiFormatable with
+                member this.ToScpiString () = this |> function
+                    | Trigger1 -> "TRIG1"
+                    | Trigger2 -> "TRIG2"
+                    | Pulse    -> "PULSE"
 
         /// Where to source an internal trigger from.
         type InternalTriggerSource =
             | PulseVideo
             | PulseSync
+            interface SCPI.IScpiFormatable with
+                member this.ToScpiString () = this |> function
+                    | PulseVideo -> "PVIDEO"
+                    | PulseSync  -> "PSYNC"
 
         /// What type the trigger source should be.
         type TriggerSourceType =
@@ -100,6 +146,14 @@ module Model =
             | ExternalType
             | InternalType
             | TimerType
+            interface SCPI.IScpiFormatable with
+                member this.ToScpiString () = this |> function
+                    | ImmediateType  -> "IMM"
+                    | TriggerKeyType -> "KEY"
+                    | BusType        -> "BUS"
+                    | ExternalType   -> "EXT"
+                    | InternalType   -> "INT"
+                    | TimerType      -> "TIM"
 
         /// A complete type of a trigger source.
         type TriggerSource =
@@ -111,27 +165,55 @@ module Model =
             | Timer of period : Duration
 
         /// The type of trigger, either step or list.
-        type TriggerType = StepTrigger | ListTrigger
+        type TriggerType =
+            | StepTrigger
+            | ListTrigger
 
     [<AutoOpen>]
     module Modulation =
         // Unique Sources
         /// Which channel to listen for external input on.
-        type ExternalInput = EXT1 | EXT2
+        type ExternalInput =
+            | EXT1
+            | EXT2
+            interface SCPI.IScpiFormatable with
+                member this.ToScpiString () = this |> function
+                    | EXT1 -> "EXT1"
+                    | EXT2 -> "EXT2"
+
         /// Internal modulation source
-        type InternalModulationSource = INT1 | INT2
+        type InternalModulationSource = INT1 | INT2 with
+            interface SCPI.IScpiFormatable with
+                member this.ToScpiString () = this |> function
+                    | INT1 -> "INT1"
+                    | INT2 -> "INT2"
         /// Which channel to use for the function generator.
         type FunctionGenerator = Function1 | Function2
 
         /// Which amplitude modulation path to use.
-        type AmPath = AM1 | AM2
+        type AmPath = AM1 | AM2 with
+            interface SCPI.IScpiFormatable with
+                member this.ToScpiString () = this |> function
+                    | AM1 -> "AM1"
+                    | AM2 -> "AM2"
         /// Which frequency modulation path to use.
-        type FmPath = FM1 | FM2
+        type FmPath = FM1 | FM2 with
+            interface SCPI.IScpiFormatable with
+                member this.ToScpiString () = this |> function
+                    | FM1 -> "FM1"
+                    | FM2 -> "FM2"
 
         /// A depth of something, either linear as a percentage, or exponential, as a decibel ratio.
         type Depth =
             | Linear of depth : Percentage
             | Exponential of depth : DecibelRatio
+
+        /// The type of modulation depth - linear or exponential.
+        type DepthType = LinearType | ExponentialType with
+            interface SCPI.IScpiFormatable with
+                member this.ToScpiString () = this |> function
+                    | LinearType -> "LIN"
+                    | ExponentialType -> "EXP"
 
         type LfOutput = { PeakAmplitude : Voltage }
 
@@ -179,6 +261,10 @@ module Model =
         type ModulationChannel =
             | AmChannel of path : AmPath
             | FmChannel of path : FmPath
+            interface SCPI.IScpiFormatable with
+                member this.ToScpiString () = this |> function
+                    | AmChannel path -> SCPI.format path
+                    | FmChannel path -> SCPI.format path
 
         /// Get the channel which is being modulated.
         let modulationChannel = function
@@ -190,6 +276,14 @@ module Model =
             | ExternalPort of port : ExternalInput
             | InternalPort of port : InternalModulationSource
             | InternalGenerator of generator : FunctionGenerator
+            interface SCPI.IScpiFormatable with
+                member this.ToScpiString () = this |> function
+                    | ExternalPort EXT1 -> "EXT1"
+                    | ExternalPort EXT2 -> "EXT2"
+                    | InternalPort INT1 -> "INT1"
+                    | InternalPort INT2 -> "INT2"
+                    | InternalGenerator Function1 -> "FUNCTION1"
+                    | InternalGenerator Function2 -> "FUNCTION2"
 
         /// Get the source of a modulation.
         let modulationSource = function
@@ -202,12 +296,20 @@ module Model =
             | InternalSource (port,_) -> InternalPort port
             | InternalFunctionGenerator (generator,_) -> InternalGenerator generator
 
+    [<AutoOpen>]
     module Sweep =
         /// The mode to operate the sweep in, either fixed or swept.
-        type SweepMode = Fixed | Swept
+        type SweepMode = Fixed | Swept with
+            interface SCPI.IScpiFormatable with
+                member this.ToScpiString () = this |> function
+                     | Fixed -> "FIX"
+                     | Swept -> "LIST"
 
         /// The type of sweep to use, either list or step.
-        type SweepType = List | Step
+        type SweepType = List | Step with
+            member this.ToScpiString () = this |> function
+                 | List -> "LIST"
+                 | Step -> "STEP"
 
         /// A range of values, with a begin value and an end value.
         type Range<'T> = { Start : 'T; Stop : 'T }
@@ -257,18 +359,18 @@ module Model =
     [<AutoOpen>]
     module Route =
         /// Generic interface inherited by all other output signals.
-        type ISignal = interface end
+        type ISignal = inherit SCPI.IScpiFormatable
 
         /// An output signal which is able to be sent through the user output BNCs.
-        type IUserSignal = interface inherit ISignal end
+        type IUserSignal = inherit ISignal
         /// An output signal which is able to be sent through the Sweep Out BNC.
-        type ISweepOutSignal = interface inherit ISignal end
+        type ISweepOutSignal = inherit ISignal
         /// An output signal which is able to be sent through the Trigger1 or Trigger2 BNCs.
-        type ITriggerSignal = interface inherit ISignal end
+        type ITriggerSignal = inherit ISignal
         /// A signal which is either a marker channel, or no channel.
-        type IMarkerSignal = interface inherit ISignal end
+        type IMarkerSignal = inherit ISignal
         /// A signal input from one of the specifically user-controlled BNCs.
-        type IUserBncSignal = interface inherit ISignal end
+        type IUserBncSignal = inherit ISignal
 
         /// Type to denote that no output signal is being sent through a connector.
         type NoSignal =
@@ -278,6 +380,8 @@ module Model =
             interface ITriggerSignal
             interface IMarkerSignal
             interface IUserBncSignal
+            interface SCPI.IScpiFormatable with
+                member this.ToScpiString () = "NONE"
 
         /// A marker signal output.
         type UserSignalMarker =
@@ -287,11 +391,20 @@ module Model =
             | RouteMarker4
             interface IUserSignal
             interface IMarkerSignal
+            interface SCPI.IScpiFormatable with
+                member this.ToScpiString () = this |> function
+                    | RouteMarker1 -> "M1"
+                    | RouteMarker2 -> "M2"
+                    | RouteMarker3 -> "M3"
+                    | RouteMarker4 -> "M4"
 
         /// The signal present on the 29th pin of the auxiliary connector.
         type UserSignalAux =
             | RouteAux29
             interface IUserSignal
+            interface SCPI.IScpiFormatable with
+                member this.ToScpiString () = this |> function
+                    | RouteAux29 -> "AUX29"
 
         /// Output signals automatically generated by the system, all of which may be sent through
         /// the system output BNCs.
@@ -302,12 +415,22 @@ module Model =
             | RouteSweptFunctionDone
             interface ISweepOutSignal
             interface ITriggerSignal
+            interface SCPI.IScpiFormatable with
+                member this.ToScpiString () = this |> function
+                    | RouteSourceSettled -> "SETTLED"
+                    | RoutePulseVideo -> "PVIDEO"
+                    | RoutePulseSync -> "PSYNC"
+                    | RouteSweptFunctionDone -> "SFDONE"
 
         /// A signal which may only be routed through the Sweep Out BNC.
         type SystemSignalSweepOut =
             | RouteSweepOut
             | RouteSweepRun
             interface ISweepOutSignal
+            interface SCPI.IScpiFormatable with
+                member this.ToScpiString () = this |> function
+                    | RouteSweepOut -> "SWEEP"
+                    | RouteSweepRun -> "SRUN"
 
         /// A signal which may only be routed through the two Trigger BNCs.
         type SystemSignalTrigger =
@@ -316,6 +439,12 @@ module Model =
             | RoutePulseBnc
             | RouteOtherTrigger
             interface ITriggerSignal
+            interface SCPI.IScpiFormatable with
+                member this.ToScpiString () = this |> function
+                    | RouteSweepTriggerOut -> "SWEEP"
+                    | RouteLxi -> "LXI"
+                    | RoutePulseBnc -> "PULSE"
+                    | RouteOtherTrigger -> "TRIG"
 
         /// A signal coming from one of the user-controlled BNCs.
         type UserBnc =
@@ -324,6 +453,12 @@ module Model =
             | RouteEvent1
             | RoutePatternTrigger
             interface IUserBncSignal
+            interface SCPI.IScpiFormatable with
+                member this.ToScpiString () = this |> function
+                    | RouteBasebandTrigger1 -> "BBTRIGGER1"
+                    | RouteBasebandTrigger2 -> "BBTRIGGER2"
+                    | RouteEvent1  -> "EVENT1"
+                    | RoutePatternTrigger -> "PTRIGGER"
 
         /// A complete set of output routings to write to the machine.
         type internal OutputRouting = {

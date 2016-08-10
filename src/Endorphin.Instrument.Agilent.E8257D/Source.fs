@@ -5,31 +5,7 @@ namespace Endorphin.Instrument.Agilent.E8257D
 open Endorphin.Core
 
 module Source =
-    module internal Translate =
-        /// Convert the internal representation of a trigger source to a machine representation.
-        let sourceString = function
-            | ExternalPort EXT1 -> "EXT1"
-            | ExternalPort EXT2 -> "EXT2"
-            | InternalPort INT1 -> "INT1"
-            | InternalPort INT2 -> "INT2"
-            | InternalGenerator Function1 -> "FUNCTION1"
-            | InternalGenerator Function2 -> "FUNCTION2"
-
-
-        /// Convert the machine representation of a trigger source into an internal representation.
-        let parseSource str =
-            match String.toUpper str with
-            | "EXT1" -> ExternalPort EXT1
-            | "EXT2" -> ExternalPort EXT2
-            | "INT1" -> InternalPort INT1
-            | "INT2" -> InternalPort INT2
-            | "FUNCTION1" -> InternalGenerator Function1
-            | "FUNCTION2" -> InternalGenerator Function2
-            | str -> raise << UnexpectedReplyException <| sprintf "Unexpected source: %s" str
-
     module Control =
-        open Translate
-
         // Keys are e.g. :AM1:INTERNAL:FUNCTION1:SHAPE
         //           or  :FM2:EXT1:COUPLING
         //           or  :FUNCTION1:SHAPE
@@ -38,27 +14,26 @@ module Source =
         //         or "" + "FUNCTION1 + :SHAPE
         // Sources can be used directly (low frequency oscillator) or by modulations
 
+        let private sourceString (src : SourceProvider) = SCPI.format src
         /// Concatenate the key, command subsystem prefix and source into a machine-readable
         /// command string.
-        let private sourceKey key prefix src = sprintf "%s:%s%s" prefix src key
+        let private sourceKey key prefix src =
+            sprintf "%s:%s%s" prefix (sourceString src) key
 
         module Function =
-            /// Create a key for the given function, with the correct subsystem and source.
-            let private functionKey key prefix fg = sourceKey key prefix (sourceString fg)
-
             /// Key to create a function shape.
             let private shapeKey = ":SHAPE"
             /// Key to create a function in the ramp shape.
             let private rampKey =  ":SHAPE:RAMP"
             /// Query the shape of the machine, given the correct source and subsystem.
-            let internal queryShape prefix fg rfSource str =
+            let internal queryShape prefix fg str  instrument=
                 let getRamp = async {
-                    let rkey = functionKey rampKey prefix fg
-                    let! polarity = IO.queryPolarity rkey rfSource
+                    let rkey = sourceKey rampKey prefix fg
+                    let! polarity = IO.query Parse.polarity rkey instrument
                     return Ramp polarity }
-                let key = functionKey shapeKey prefix fg
+                let key = sourceKey shapeKey prefix fg
                 async {
-                    let! shape = IO.queryKeyString String.toUpper key rfSource
+                    let! shape = IO.query String.toUpper key instrument
                     match shape with
                     | "SINE"             -> return Sine
                     | "TRI" | "TRIANGLE" -> return Triangle
@@ -68,33 +43,30 @@ module Source =
                                                    <| sprintf "Unexpected function shape type string: %s" str }
 
             /// Set the shape of the function generator.
-            let internal setShape prefix fg rfSource (shape : FunctionShape) =
-                let key = functionKey shapeKey prefix fg
-                let rkey = functionKey rampKey prefix fg
+            let internal setShape prefix fg (shape : FunctionShape) instrument =
+                let key = sourceKey shapeKey prefix fg
+                let rkey = sourceKey rampKey prefix fg
                 async {
-                    do! IO.setValueString functionShapeString key rfSource shape
+                    do! IO.set<FunctionShape> key shape instrument
                     match shape with
-                    | Ramp polarity -> do! IO.setPolarity rkey rfSource polarity
+                    | Ramp polarity -> do! IO.set<Polarity> rkey polarity instrument
                     | _ -> () }
 
             /// Key for setting frequencies of the function generator.
             let private frequencyKey = ":FREQUENCY"
             /// Set the frequency of the function generator.
-            let internal setFrequency prefix fg = IO.setFrequency (functionKey frequencyKey prefix fg)
+            let internal setFrequency prefix fg = IO.set<Frequency> (sourceKey frequencyKey prefix fg)
             /// Query the frequency of the function generator.
-            let internal queryFrequency prefix fg = IO.queryFrequency (functionKey frequencyKey prefix fg)
+            let internal queryFrequency prefix fg = IO.query Parse.frequency (sourceKey frequencyKey prefix fg)
 
         module Internal =
-            /// Create a key for the given function, with the correct subsystem and source.
-            let private functionKey key prefix fg = sourceKey key prefix (sourceString fg)
-
             /// Key to create a function shape.
             let private shapeKey = ":SHAPE"
             /// Query the shape of the machine, given the correct source and subsystem.
-            let internal queryShape prefix fg rfSource str =
-                let key = functionKey shapeKey prefix fg
+            let internal queryShape prefix fg str  instrument=
+                let key = sourceKey shapeKey prefix fg
                 async {
-                    let! shape = IO.queryKeyString String.toUpper key rfSource
+                    let! shape = IO.query String.toUpper key instrument
                     match shape with
                     | "SINE"             -> return Sine
                     | "TRI" | "TRIANGLE" -> return Triangle
@@ -103,57 +75,54 @@ module Source =
                                                    <| sprintf "Unexpected function shape type string: %s" str }
 
             /// Set the shape of the function generator.
-            let internal setShape prefix src rfSource (shape : FunctionShape) =
+            let internal setShape prefix src (shape : FunctionShape) instrument =
                 let key = sprintf "%s:%s:FUNCTION:SHAPE" prefix (sourceString src)
-                IO.setValueString functionShapeString key rfSource shape
+                IO.set<FunctionShape> key shape instrument
 
-            let internal setLfOutput rfSource source (lfOutput : LfOutput) = async {
+            let internal setLfOutput source (lfOutput : LfOutput) instrument = async {
                 // expected to drive a 50 ohm load (see doubled voltage on a high impedance scope)
-                do! IO.setPeakVoltage ":LFO:AMPLITUDE" rfSource lfOutput.PeakAmplitude
-                do! IO.setValueString sourceString ":LFO:SOURCE" rfSource source
-                do! IO.setOnOffState ":LFO:STATE" rfSource On }
+                do! IO.set<Voltage> ":LFO:AMPLITUDE" lfOutput.PeakAmplitude instrument
+                do! IO.set<SourceProvider> ":LFO:SOURCE" source instrument
+                do! IO.set<OnOffState> ":LFO:STATE" On  instrument}
 
             /// Key for setting frequencies of the function generator.
             /// Set the frequency of the function generator.
-            let internal setFrequency prefix src = IO.setFrequency (sprintf "%s:%s:FREQ" prefix (sourceString src))
+            let internal setFrequency prefix src = IO.set<Frequency> (sprintf "%s:%s:FREQ" prefix (sourceString src))
             /// Query the frequency of the function generator.
-            let internal queryFrequency prefix src = IO.queryFrequency (sprintf "%s:%s:FREQ" prefix (sourceString src))
+            let internal queryFrequency prefix src = IO.query Parse.frequency (sprintf "%s:%s:FREQ" prefix (sourceString src))
 
 
         module External =
-            /// Key needed for operations on external sources.
-            let private externalKey key prefix src = sourceKey key prefix (sourceString src)
-
             /// Key for the coupling system.
             let private couplingKey = ":COUPLING"
             /// Set the coupling of an external source.
-            let internal setCoupling prefix src = IO.setValueString couplingString (externalKey couplingKey prefix src)
+            let internal setCoupling prefix src = IO.set<Coupling> (sourceKey couplingKey prefix src)
             /// Query the coupling of an external source.
-            let internal queryCoupling prefix src = IO.queryKeyString parseCoupling (externalKey couplingKey prefix src)
+            let internal queryCoupling prefix src = IO.query Parse.coupling (sourceKey couplingKey prefix src)
 
             /// Key for the impedance system.
             let private impedanceKey = ":IMPEDANCE"
             /// Set the impedance of an external source.
-            let internal setImpedance prefix src = IO.setValueString impedanceString (externalKey impedanceKey prefix src)
+            let internal setImpedance prefix src = IO.set<Impedance> (sourceKey impedanceKey prefix src)
             /// Query the impedance of an external source.
-            let internal queryImpedance prefix src = IO.queryKeyString parseImpedance (externalKey impedanceKey prefix src)
+            let internal queryImpedance prefix src = IO.query Parse.impedance (sourceKey impedanceKey prefix src)
 
     module Apply =
         open Control
 
         /// Apply the given source configurations to the machine.
-        let internal setup prefix source rfSource = async {
+        let internal setup prefix source  instrument= async {
             let sourceProvider = sourceProvider source
             match source with
             | ExternalSource (_, settings) ->
-                do! External.setCoupling prefix sourceProvider rfSource settings.Coupling
-                do! External.setImpedance prefix sourceProvider rfSource settings.Impedance
+                do! External.setCoupling prefix sourceProvider settings.Coupling instrument
+                do! External.setImpedance prefix sourceProvider settings.Impedance instrument
             | InternalFunctionGenerator (_, settings) ->
-                do! Function.setShape prefix sourceProvider rfSource settings.Shape
-                do! Function.setFrequency prefix sourceProvider rfSource settings.Frequency
+                do! Function.setShape prefix sourceProvider settings.Shape instrument
+                do! Function.setFrequency prefix sourceProvider settings.Frequency instrument
             | InternalSource (_,settings) ->
-                do! Internal.setShape prefix sourceProvider rfSource settings.Shape
-                do! Internal.setFrequency prefix sourceProvider rfSource settings.Frequency
+                do! Internal.setShape prefix sourceProvider settings.Shape instrument
+                do! Internal.setFrequency prefix sourceProvider settings.Frequency instrument
                 match settings.LfOutput with
-                | Some lfOutput -> do! Internal.setLfOutput rfSource sourceProvider lfOutput
+                | Some lfOutput -> do! Internal.setLfOutput sourceProvider lfOutput instrument
                 | None -> () }
