@@ -54,10 +54,10 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '1', 1)" onmouseover="showTip(event, '1', 1)">
-            queryCarrierAmplitude 
+            queryCarrierAmplitude x
           </code>
           <div class="tip" id="1">
-            <strong>Signature:</strong> RfSource -&gt; Async&lt;Amplitude&gt;<br />
+            <strong>Signature:</strong> x:IScpiInstrument -&gt; Async&lt;unit&gt;<br />
                       </div>
         </td>
         <td class="xmldoc">
@@ -74,10 +74,10 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '2', 2)" onmouseover="showTip(event, '2', 2)">
-            queryCarrierFrequency 
+            queryCarrierFrequency x
           </code>
           <div class="tip" id="2">
-            <strong>Signature:</strong> RfSource -&gt; Async&lt;Frequency&gt;<br />
+            <strong>Signature:</strong> x:IScpiInstrument -&gt; Async&lt;Frequency&gt;<br />
                       </div>
         </td>
         <td class="xmldoc">
@@ -94,14 +94,14 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '3', 3)" onmouseover="showTip(event, '3', 3)">
-            queryOutput 
+            queryOutput x
           </code>
           <div class="tip" id="3">
-            <strong>Signature:</strong> RfSource -&gt; Async&lt;OnOffState&gt;<br />
+            <strong>Signature:</strong> x:IScpiInstrument -&gt; Async&lt;OnOffState&gt;<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/WarwickEPR/Endorphin.Instrument.Agilent.E8257D/tree/master/src/Endorphin.Instrument.Agilent.E8257D/Basic.fs#L45-45" class="github-link">
+            <a href="http://github.com/WarwickEPR/Endorphin.Instrument.Agilent.E8257D/tree/master/src/Endorphin.Instrument.Agilent.E8257D/Basic.fs#L42-42" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -114,10 +114,10 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '4', 4)" onmouseover="showTip(event, '4', 4)">
-            queryPhase 
+            queryPhase x
           </code>
           <div class="tip" id="4">
-            <strong>Signature:</strong> RfSource -&gt; Async&lt;Phase&gt;<br />
+            <strong>Signature:</strong> x:IScpiInstrument -&gt; Async&lt;Phase&gt;<br />
                       </div>
         </td>
         <td class="xmldoc">
@@ -134,10 +134,10 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '5', 5)" onmouseover="showTip(event, '5', 5)">
-            setCarrierAmplitude 
+            setCarrierAmplitude x
           </code>
           <div class="tip" id="5">
-            <strong>Signature:</strong> RfSource -&gt; Amplitude -&gt; Async&lt;unit&gt;<br />
+            <strong>Signature:</strong> x:Amplitude -&gt; IScpiInstrument -&gt; Async&lt;unit&gt;<br />
                       </div>
         </td>
         <td class="xmldoc">
@@ -154,10 +154,10 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '6', 6)" onmouseover="showTip(event, '6', 6)">
-            setCarrierFrequency 
+            setCarrierFrequency x
           </code>
           <div class="tip" id="6">
-            <strong>Signature:</strong> RfSource -&gt; Frequency -&gt; Async&lt;unit&gt;<br />
+            <strong>Signature:</strong> x:Frequency -&gt; IScpiInstrument -&gt; Async&lt;unit&gt;<br />
                       </div>
         </td>
         <td class="xmldoc">
@@ -174,14 +174,14 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '7', 7)" onmouseover="showTip(event, '7', 7)">
-            setOutput 
+            setOutput x
           </code>
           <div class="tip" id="7">
-            <strong>Signature:</strong> RfSource -&gt; OnOffState -&gt; Async&lt;unit&gt;<br />
+            <strong>Signature:</strong> x:OnOffState -&gt; IScpiInstrument -&gt; Async&lt;unit&gt;<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/WarwickEPR/Endorphin.Instrument.Agilent.E8257D/tree/master/src/Endorphin.Instrument.Agilent.E8257D/Basic.fs#L43-43" class="github-link">
+            <a href="http://github.com/WarwickEPR/Endorphin.Instrument.Agilent.E8257D/tree/master/src/Endorphin.Instrument.Agilent.E8257D/Basic.fs#L40-40" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -194,10 +194,10 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '8', 8)" onmouseover="showTip(event, '8', 8)">
-            setPhase 
+            setPhase x
           </code>
           <div class="tip" id="8">
-            <strong>Signature:</strong> RfSource -&gt; Phase -&gt; Async&lt;unit&gt;<br />
+            <strong>Signature:</strong> x:Phase -&gt; IScpiInstrument -&gt; Async&lt;unit&gt;<br />
                       </div>
         </td>
         <td class="xmldoc">
@@ -214,14 +214,14 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '9', 9)" onmouseover="showTip(event, '9', 9)">
-            trigger 
+            trigger instrument
           </code>
           <div class="tip" id="9">
-            <strong>Signature:</strong> RfSource -&gt; Async&lt;unit&gt;<br />
+            <strong>Signature:</strong> instrument:IScpiInstrument -&gt; Async&lt;unit&gt;<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/WarwickEPR/Endorphin.Instrument.Agilent.E8257D/tree/master/src/Endorphin.Instrument.Agilent.E8257D/Basic.fs#L37-37" class="github-link">
+            <a href="http://github.com/WarwickEPR/Endorphin.Instrument.Agilent.E8257D/tree/master/src/Endorphin.Instrument.Agilent.E8257D/Basic.fs#L34-34" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>

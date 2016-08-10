@@ -32,12 +32,12 @@
       <div class="row">
         <div class="span9" id="main">
           
-<h4><a name="0-2-0-2016-08-09" class="anchor" href="#0-2-0-2016-08-09">0.2.0 - 2016-08-09</a></h4>
+<h4><a name="0-2-1-2016-08-10" class="anchor" href="#0-2-1-2016-08-10">0.2.1 - 2016-08-10</a></h4>
 <ul>
-<li>Move to Endorphin.Core.SCPI interface for IO</li>
 <li>
-Make IO functions have consistent argument ordering - the instrument now
-always comes last in the list.
+Move to Endorphin.Core.SCPI-based IO for code reusability, and to make the IO
+much less opaque.  Users may now call the Endorphin.Core.SCPI functions
+directly on the instrument to write arbitrary SCPI commands to it.
 </li>
 </ul>
 <h4><a name="0-1-1-2016-08-01" class="anchor" href="#0-1-1-2016-08-01">0.1.1 - 2016-08-01</a></h4>

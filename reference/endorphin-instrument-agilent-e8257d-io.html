@@ -40,7 +40,7 @@
   <span>Namespace: Endorphin.Instrument.Agilent.E8257D</span><br />
 </p>
 <div class="xmldoc">
-<p>Common functions to set/query values of a VISA Agilent instrument.
+<p>Common functions to set/query values of a Agilent instrument.
 Includes functions to access values such as numbers, frequencies etc.,
 which are common to different subsystems.</p>
 
@@ -58,19 +58,18 @@ which are common to different subsystems.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '10', 10)" onmouseover="showTip(event, '10', 10)">
-            connect visaAddress timeout
+            connect visaTcpipAddress timeout
           </code>
           <div class="tip" id="10">
-            <strong>Signature:</strong> visaAddress:string -&gt; timeout:int&lt;MeasureProduct&lt;ms,MeasureOne&gt;&gt; -&gt; Async&lt;Instrument&gt;<br />
+            <strong>Signature:</strong> visaTcpipAddress:string -&gt; timeout:int&lt;MeasureProduct&lt;ms,MeasureOne&gt;&gt; -&gt; Async&lt;Instrument&gt;<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/WarwickEPR/Endorphin.Instrument.Agilent.E8257D/tree/master/src/Endorphin.Instrument.Agilent.E8257D/IO.fs#L39-39" class="github-link">
+            <a href="http://github.com/WarwickEPR/Endorphin.Instrument.Agilent.E8257D/tree/master/src/Endorphin.Instrument.Agilent.E8257D/IO.fs#L71-71" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Open an instrument for communication at the given VISA address, with a specified
-timeout in milliseconds.</p>
+          <p>Connect to an Agilent E8257D over TCPIP Visa, and perform the initialisation checks.</p>
 
 
         </td>
@@ -86,11 +85,11 @@ timeout in milliseconds.</p>
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/WarwickEPR/Endorphin.Instrument.Agilent.E8257D/tree/master/src/Endorphin.Instrument.Agilent.E8257D/IO.fs#L45-45" class="github-link">
+            <a href="http://github.com/WarwickEPR/Endorphin.Instrument.Agilent.E8257D/tree/master/src/Endorphin.Instrument.Agilent.E8257D/IO.fs#L77-77" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Close the instrument, passing control back to the front panel.</p>
+          <p>Disconnect from an Agilent E8257D, returning control back to the front panel.</p>
 
 
         </td>
@@ -99,18 +98,21 @@ timeout in milliseconds.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '12', 12)" onmouseover="showTip(event, '12', 12)">
-            post key instrument
+            initialise instrument
           </code>
           <div class="tip" id="12">
-            <strong>Signature:</strong> key:string -&gt; instrument:IScpiInstrument -&gt; Async&lt;unit&gt;<br />
+            <strong>Signature:</strong> instrument:IScpiInstrument -&gt; Async&lt;unit&gt;<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/WarwickEPR/Endorphin.Instrument.Agilent.E8257D/tree/master/src/Endorphin.Instrument.Agilent.E8257D/IO.fs#L51-51" class="github-link">
+            <a href="http://github.com/WarwickEPR/Endorphin.Instrument.Agilent.E8257D/tree/master/src/Endorphin.Instrument.Agilent.E8257D/IO.fs#L62-62" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Post a key to the instrument and check the error queue afterwards.</p>
+          <p>Perform initialisation checks on the machine to ensure the driver software will work with it.
+Throws SCPI.InvalidResponseException if the machine responds with an invalid string over SCPI,
+UnexpectedReplyException if the model does not match, or InstrumentErrorException if there are
+errors in the queue.</p>
 
 
         </td>
@@ -119,18 +121,18 @@ timeout in milliseconds.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '13', 13)" onmouseover="showTip(event, '13', 13)">
-            query parser key instrument
+            localControl instrument
           </code>
           <div class="tip" id="13">
-            <strong>Signature:</strong> parser:(string -&gt; &#39;a) -&gt; key:string -&gt; instrument:IScpiInstrument -&gt; Async&lt;&#39;a&gt;<br />
-                          <strong>Type parameters:</strong> 'a          </div>
+            <strong>Signature:</strong> instrument:IScpiInstrument -&gt; Async&lt;unit&gt;<br />
+                      </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/WarwickEPR/Endorphin.Instrument.Agilent.E8257D/tree/master/src/Endorphin.Instrument.Agilent.E8257D/IO.fs#L61-61" class="github-link">
+            <a href="http://github.com/WarwickEPR/Endorphin.Instrument.Agilent.E8257D/tree/master/src/Endorphin.Instrument.Agilent.E8257D/IO.fs#L68-68" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Query the instrument for a value and check the error queue afterwards.</p>
+          <p>Return control back to the front panel of the instrument.</p>
 
 
         </td>
@@ -139,19 +141,18 @@ timeout in milliseconds.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '14', 14)" onmouseover="showTip(event, '14', 14)">
-            queryAmplitude key instrument
+            post key instrument
           </code>
           <div class="tip" id="14">
-            <strong>Signature:</strong> key:string -&gt; instrument:IScpiInstrument -&gt; Async&lt;Amplitude&gt;<br />
+            <strong>Signature:</strong> key:string -&gt; instrument:IScpiInstrument -&gt; Async&lt;unit&gt;<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/WarwickEPR/Endorphin.Instrument.Agilent.E8257D/tree/master/src/Endorphin.Instrument.Agilent.E8257D/IO.fs#L73-73" class="github-link">
+            <a href="http://github.com/WarwickEPR/Endorphin.Instrument.Agilent.E8257D/tree/master/src/Endorphin.Instrument.Agilent.E8257D/IO.fs#L24-24" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Query the amplitude at the given key.  Currently only supports returning the value as
-dBm, rather than as a ratio.</p>
+          <p>Post a key to the instrument, then check the error queue afterwards.</p>
 
 
         </td>
@@ -160,18 +161,18 @@ dBm, rather than as a ratio.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '15', 15)" onmouseover="showTip(event, '15', 15)">
-            queryAmplitudeSeq key instrument
+            query parser key instrument
           </code>
           <div class="tip" id="15">
-            <strong>Signature:</strong> key:string -&gt; instrument:IScpiInstrument -&gt; Async&lt;seq&lt;Amplitude&gt;&gt;<br />
-                      </div>
+            <strong>Signature:</strong> parser:(string -&gt; &#39;Out) -&gt; key:string -&gt; instrument:IScpiInstrument -&gt; Async&lt;&#39;Out&gt;<br />
+                          <strong>Type parameters:</strong> 'Out          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/WarwickEPR/Endorphin.Instrument.Agilent.E8257D/tree/master/src/Endorphin.Instrument.Agilent.E8257D/IO.fs#L83-83" class="github-link">
+            <a href="http://github.com/WarwickEPR/Endorphin.Instrument.Agilent.E8257D/tree/master/src/Endorphin.Instrument.Agilent.E8257D/IO.fs#L33-33" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Query a sequence of amplitudes, returning the values in dBm.</p>
+          <p>Query a key for a value, then check the error queue after.</p>
 
 
         </td>
@@ -180,18 +181,20 @@ dBm, rather than as a ratio.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '16', 16)" onmouseover="showTip(event, '16', 16)">
-            querySeq parser key
+            queryAmplitude key instrument
           </code>
           <div class="tip" id="16">
-            <strong>Signature:</strong> parser:(string -&gt; &#39;a) -&gt; key:string -&gt; IScpiInstrument -&gt; Async&lt;seq&lt;&#39;a&gt;&gt;<br />
-                          <strong>Type parameters:</strong> 'a          </div>
+            <strong>Signature:</strong> key:string -&gt; instrument:IScpiInstrument -&gt; Async&lt;unit&gt;<br />
+                      </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/WarwickEPR/Endorphin.Instrument.Agilent.E8257D/tree/master/src/Endorphin.Instrument.Agilent.E8257D/IO.fs#L69-69" class="github-link">
+            <a href="http://github.com/WarwickEPR/Endorphin.Instrument.Agilent.E8257D/tree/master/src/Endorphin.Instrument.Agilent.E8257D/IO.fs#L52-52" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Query a SCPI key for a given sequence of values, checking the error queue afterwards.</p>
+          <p>Safely query an amplitude from the machine, setting the power units to be
+in the correct format before, and returning them to their previous settings
+afterwards.</p>
 
 
         </td>
@@ -200,18 +203,20 @@ dBm, rather than as a ratio.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '17', 17)" onmouseover="showTip(event, '17', 17)">
-            set key value instrument
+            queryAmplitudeSeq key instrument
           </code>
           <div class="tip" id="17">
-            <strong>Signature:</strong> key:string -&gt; value:&#39;In -&gt; instrument:IScpiInstrument -&gt; Async&lt;unit&gt;<br />
-                          <strong>Type parameters:</strong> 'In          </div>
+            <strong>Signature:</strong> key:string -&gt; instrument:IScpiInstrument -&gt; Async&lt;unit&gt;<br />
+                      </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/WarwickEPR/Endorphin.Instrument.Agilent.E8257D/tree/master/src/Endorphin.Instrument.Agilent.E8257D/IO.fs#L56-56" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Set a SCPI key to a given value.</p>
+          <p>Safely query an amplitude sequence from the machine, setting the power units to be
+in the correct format before, and returning them to their previous settings
+afterwards.</p>
 
 
         </td>
@@ -220,18 +225,58 @@ dBm, rather than as a ratio.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '18', 18)" onmouseover="showTip(event, '18', 18)">
-            setSeq key seq
+            querySeq parser key instrument
           </code>
           <div class="tip" id="18">
-            <strong>Signature:</strong> key:string -&gt; seq:seq&lt;&#39;In&gt; -&gt; IScpiInstrument -&gt; Async&lt;unit&gt;<br />
-                          <strong>Type parameters:</strong> 'In          </div>
+            <strong>Signature:</strong> parser:(string -&gt; &#39;Out) -&gt; key:string -&gt; instrument:IScpiInstrument -&gt; Async&lt;seq&lt;&#39;Out&gt;&gt;<br />
+                          <strong>Type parameters:</strong> 'Out          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/WarwickEPR/Endorphin.Instrument.Agilent.E8257D/tree/master/src/Endorphin.Instrument.Agilent.E8257D/IO.fs#L67-67" class="github-link">
+            <a href="http://github.com/WarwickEPR/Endorphin.Instrument.Agilent.E8257D/tree/master/src/Endorphin.Instrument.Agilent.E8257D/IO.fs#L36-36" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Set a SCPI key to a given sequence of values, querying the error queue afterwards.</p>
+          <p>Query a key for a CSV sequence of values, each of which is interpreted by the parser command.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '19', 19)" onmouseover="showTip(event, '19', 19)">
+            set key value instrument
+          </code>
+          <div class="tip" id="19">
+            <strong>Signature:</strong> key:string -&gt; value:&#39;In -&gt; instrument:IScpiInstrument -&gt; Async&lt;unit&gt;<br />
+                          <strong>Type parameters:</strong> 'In          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/WarwickEPR/Endorphin.Instrument.Agilent.E8257D/tree/master/src/Endorphin.Instrument.Agilent.E8257D/IO.fs#L27-27" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Set a key to a value, then check the error queue after.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '20', 20)" onmouseover="showTip(event, '20', 20)">
+            setSeq key values instrument
+          </code>
+          <div class="tip" id="20">
+            <strong>Signature:</strong> key:string -&gt; values:seq&lt;&#39;In&gt; -&gt; instrument:IScpiInstrument -&gt; Async&lt;unit&gt;<br />
+                          <strong>Type parameters:</strong> 'In          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/WarwickEPR/Endorphin.Instrument.Agilent.E8257D/tree/master/src/Endorphin.Instrument.Agilent.E8257D/IO.fs#L29-29" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Write a sequency of values</p>
 
 
         </td>
