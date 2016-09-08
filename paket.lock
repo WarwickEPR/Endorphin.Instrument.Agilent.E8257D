@@ -1,22 +1,22 @@
 NUGET
   remote: https://www.nuget.org/api/v2
-    Endorphin.Core (0.3.5)
+    Endorphin.Core (0.3.6)
       FSharp.Core
       log4net (>= 2.0 < 3.0)
-    Endorphin.Core.NationalInstruments (0.3.5)
+    Endorphin.Core.NationalInstruments (0.3.6)
       Endorphin.Core (>= 0.3)
       log4net (>= 2.0 < 3.0)
     FSharp.Core (4.0.0.1) - redirects: force
     log4net (2.0.5)
 GITHUB
   remote: WarwickEPR/Endorphin.Core
-    src/Endorphin.Core.Choice.fs (c4defa89d25c303ea6fb0d51dcf882ba6abb036d)
-    src/Endorphin.Core.Collections.fs (c4defa89d25c303ea6fb0d51dcf882ba6abb036d)
-    src/Endorphin.Core.String.fs (c4defa89d25c303ea6fb0d51dcf882ba6abb036d)
+    src/Endorphin.Core.Choice.fs (336e6bb86c12256c1ad6d2b469274e9cdfe88df5)
+    src/Endorphin.Core.Collections.fs (336e6bb86c12256c1ad6d2b469274e9cdfe88df5)
+    src/Endorphin.Core.String.fs (336e6bb86c12256c1ad6d2b469274e9cdfe88df5)
 GROUP Build
 NUGET
   remote: https://www.nuget.org/api/v2
-    FAKE (4.37.2)
+    FAKE (4.39.1)
     FSharp.Compiler.Service (2.0.0.6)
     FSharp.Formatting (2.14.4)
       FSharp.Compiler.Service (2.0.0.6)
@@ -29,10 +29,10 @@ NUGET
     Microsoft.Net.Http (2.2.29) - framework: net10, net11, net20, net30, net35, net40, net40-full
       Microsoft.Bcl (>= 1.1.10)
       Microsoft.Bcl.Build (>= 1.0.14)
-    Octokit (0.21.1)
+    Octokit (0.22)
       Microsoft.Net.Http  - framework: net10, net11, net20, net30, net35, net40, net40-full
     SourceLink.Fake (1.1)
 GITHUB
   remote: fsharp/FAKE
-    modules/Octokit/Octokit.fsx (7faaaf53e4a8fbe04a4d2b4c1bfc5d09bd82eed6)
+    modules/Octokit/Octokit.fsx (73589a85a5e30a2c78d61efccdd3446a99483142)
       Octokit (>= 0.20)

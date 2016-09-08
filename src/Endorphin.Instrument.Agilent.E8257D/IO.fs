@@ -9,6 +9,9 @@ open System.Text
 /// Includes functions to access values such as numbers, frequencies etc.,
 /// which are common to different subsystems.
 module IO =
+
+    let logger = log4net.LogManager.GetLogger "Agilent.E82570"
+
     /// Check the model number of the instrument matches one that this software is known to work with.
     let private checkModel instrument = async {
         // not checked - that's not our job in the initialisation bit
@@ -21,20 +24,30 @@ module IO =
             |> raise }
 
     /// Post a key to the instrument, then check the error queue afterwards.
-    let post key instrument = SCPI.Checked.Set.key key instrument
+    let post key instrument = async {
+        logger.Debug <| sprintf "Post key '%s'" key
+        do! SCPI.Checked.Set.key key instrument } |> SCPI.logCheckedCommand logger
 
     /// Set a key to a value, then check the error queue after.
-    let set<'In> key (value : 'In) instrument = SCPI.Checked.Set.value key value instrument
+    let set<'In> key (value : 'In) instrument = async {
+        logger.Debug <| sprintf "Set '%s' to '%s'" key (SCPI.format value)
+        do! SCPI.Checked.Set.value key value instrument } |> SCPI.logCheckedCommand logger
+
     /// Write a sequency of values
-    let setSeq<'In> key (values : seq<'In>) instrument =
-        SCPI.Checked.Set.value key (String.csvSeqString SCPI.format values) instrument
+    let setSeq<'In> key (values : seq<'In>) instrument = async {
+        let values = String.csvSeqString SCPI.format values
+        logger.Debug <| sprintf "Set '%s' to values '%s'" key values
+        do! SCPI.Checked.Set.value key values instrument } |> SCPI.logCheckedCommand logger
 
     /// Query a key for a value, then check the error queue after.
-    let query (parser : string -> 'Out) key instrument =
-        SCPI.Checked.Query.Key.parsed parser key instrument
+    let query (parser : string -> 'Out) key instrument = async {
+        logger.Debug <| sprintf "Query '%s'" key
+        return! SCPI.Checked.Query.Key.parsed parser key instrument } |> SCPI.logCheckedQuery logger
+
     /// Query a key for a CSV sequence of values, each of which is interpreted by the parser command.
-    let querySeq (parser : string -> 'Out) key instrument =
-        SCPI.Checked.Query.Key.parsed (String.parseCsvSeq parser) key instrument
+    let querySeq (parser : string -> 'Out) key instrument = async {
+        logger.Debug <| sprintf "Query sequence '%s' key"
+        return! SCPI.Checked.Query.Key.parsed (String.parseCsvSeq parser) key instrument } |> SCPI.logCheckedQuery logger
 
     /// The key for setting the units of power.
     let [<Literal>] private powerUnitKey = ":UNIT:POW"
