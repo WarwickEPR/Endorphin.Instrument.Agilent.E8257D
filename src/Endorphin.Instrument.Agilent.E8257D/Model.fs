@@ -307,9 +307,10 @@ module Model =
 
         /// The type of sweep to use, either list or step.
         type SweepType = List | Step with
-            member this.ToScpiString () = this |> function
-                 | List -> "LIST"
-                 | Step -> "STEP"
+            interface SCPI.IScpiFormatable with
+                member this.ToScpiString () = this |> function
+                     | List -> "LIST"
+                     | Step -> "STEP"
 
         /// A range of values, with a begin value and an end value.
         type Range<'T> = { Start : 'T; Stop : 'T }
