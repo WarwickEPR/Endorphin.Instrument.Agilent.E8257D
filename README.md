@@ -5,7 +5,7 @@ signal generator.
 
 Documentation:
 http://WarwickEPR.github.io/Endorphin.Instrument.Agilent.E8257D  
-More documentation to follow...
+
 
 ## Maintainers
 
